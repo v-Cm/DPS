@@ -62,8 +62,8 @@ class DataLoader:
             # Load the CSV file into Neo4j
             query = """
             LOAD CSV WITH HEADERS FROM 'file:///yellow_tripdata_2022-03.csv' AS line
-            MERGE (pickup:Location {name: line.PULocationID})
-            MERGE (dropoff:Location {name: line.DOLocationID})
+            MERGE (pickup:Location {name: toInteger(line.PULocationID)})
+            MERGE (dropoff:Location {name: toInteger(line.DOLocationID)})
             WITH pickup, dropoff, line
             CREATE (pickup)-[:TRIP {distance: toFloat(line.trip_distance), fare: toFloat(line.fare_amount),
                     pickup_dt: datetime(REPLACE(line.tpep_pickup_datetime, ' ', 'T')),
