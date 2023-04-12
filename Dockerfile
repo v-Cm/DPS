@@ -18,22 +18,25 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# TODO: Complete the Dockerfile
-# Clone the private repository using a personal access token (PAT)
+# Set /cse511 as the working directory
 WORKDIR /cse511
+
+# Fetch the dataset and the data loader script
 RUN apt-get update && \
     apt-get install -y curl && \
     curl -o yellow_tripdata_2022-03.parquet https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-03.parquet && \
     curl -H "Authorization: token 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" -H "Accept: application/vnd.github.v3.raw" -H "Cache-Control: no-cache" -o data_loader.py -L https://api.github.com/repos/CSE511-SPRING-2023/vconjeev-project-2/contents/data_loader.py
-    
+
+# Install pip and the other required libraries
 RUN python3 -m pip install --upgrade pip && \
     python3 -m pip install neo4j pandas pyarrow
 
-# Set up neo4j password
+# Set the Password and the other Neo4j configurations
 RUN echo "dbms.security.auth_enabled=true" >> /etc/neo4j/neo4j.conf && \
     echo "server.default_listen_address=0.0.0.0" >> /etc/neo4j/neo4j.conf && \
     neo4j-admin dbms set-initial-password project2phase1
 
+# Install the GDS plugin for Neo4j and configure the settings
 RUN curl -L -O https://github.com/neo4j/graph-data-science/releases/download/2.3.1/neo4j-graph-data-science-2.3.1.jar && \
     mv neo4j-graph-data-science-2.3.1.jar /var/lib/neo4j/plugins && \
     chown neo4j:neo4j /var/lib/neo4j/plugins/neo4j-graph-data-science-2.3.1.jar && \

@@ -12,45 +12,18 @@ class Interface:
         with self._driver.session() as session:
             result = session.run("CALL gds.graph.project('myGraphBfs', 'Location', {TRIP: {properties: ['distance', 'fare']}})")
             result = session.run(
-                f" MATCH (source:Location{{name:{start_node}}}), (target:Location{{name:{last_node}}}) \
-                CALL gds.bfs.stream('myGraphBfs', {{ \
-                sourceNode: source, \
-                targetNodes: target \
-                }}) \
-                YIELD path \
-                RETURN path"
+            f" MATCH (source:Location{{name:{start_node}}}), (target:Location{{name:{last_node}}}) \
+            CALL gds.bfs.stream('myGraphBfs', {{ \
+            sourceNode: source, \
+            targetNodes: target \
+            }}) \
+            YIELD path \
+            RETURN REDUCE(acc = [], n in nodes(path) | acc + {{name: n.name}}) AS path"
             )
-
-            nodes = [dict(record) for record in result]
-            print(nodes[0]['path'])
-            d = []
-            for p in nodes[0]['path']:
-                node = p.nodes[0]
-                name = node.get('name')
-                d.append({'name':name})
-                print(node)
-            print(d)
-            nodes[0]['path'] = d
-            nodes[0]['path'].append({'name':last_node})
-
-        # with self._driver.session() as session:
-        #     # result = session.run("CALL gds.graph.project('myGraphBfs', 'Location', {TRIP: {properties: ['distance', 'fare']}})")
-        #     result = session.run(
-        #         f" MATCH (source:Location{{name:{start_node}}}), (target:Location{{name:{last_node}}}) \
-        #         CALL gds.Bfs.stream('myGraphbfs', {{ \
-        #         sourceNode: source, \
-        #         targetNodes: target \
-        #         }}) \
-        #         YIELD nodeIds \
-        #         UNWIND nodeIds AS nodeId \
-        #         RETURN gds.util.asNode(nodeId).name AS name"
-        #     )
             
-        #     nodes = [{
-        #         'path':[dict(record) for record in result]
-        #     }]
-        
-        return nodes
+            nodes_list = [dict(record) for record in result]
+
+            return nodes_list
     
     def pagerank(self, max_iterations, weight_property):
         with self._driver.session() as session:
@@ -62,16 +35,8 @@ class Interface:
                 ORDER BY score DESC"
             )
 
-            nodes = []
-            for record in result:
-                node = {
-                    "name": record["name"],
-                    "score": record["score"]
-                }
-                nodes.append(node)
+            nodes_list = [{"name": record["name"], "score": record["score"]} for record in result]
+            top_node = max(nodes_list, key=lambda node: node["score"])
+            bottom_node = min(nodes_list, key=lambda node: node["score"])
 
-            # Return nodes with max and min PageRank
-            max_node = max(nodes, key=lambda x: x["score"])
-            min_node = min(nodes, key=lambda x: x["score"])
-
-            return (max_node, min_node)
+            return (top_node, bottom_node)
