@@ -59,13 +59,15 @@ class DataLoader:
 
         with self.driver.session() as session:
             session.run("""
-            LOAD CSV WITH HEADERS FROM 'file:///yellow_tripdata_2022-03.csv' AS line
-            MERGE (pickup:Location {name: toInteger(line.PULocationID)})
-            MERGE (dropoff:Location {name: toInteger(line.DOLocationID)})
-            WITH pickup, dropoff, line
-            CREATE (pickup)-[:TRIP {distance: toFloat(line.trip_distance), fare: toFloat(line.fare_amount),
-                    pickup_dt: datetime(REPLACE(line.tpep_pickup_datetime, ' ', 'T')),
-                    dropoff_dt: datetime(REPLACE(line.tpep_dropoff_datetime, ' ', 'T'))}]->(dropoff)
+            LOAD CSV WITH HEADERS FROM 'file:///yellow_tripdata_2022-03.csv' AS row
+            MERGE (pu_loc:Location {name: toInteger(row.PULocationID)})
+            MERGE (do_loc:Location {name: toInteger(row.DOLocationID)})
+            WITH pu_loc, do_loc, row
+            CREATE (pu_loc)-[:TRIP {
+                distance: toFloat(row.trip_distance), 
+                fare: toFloat(row.fare_amount),
+                pickup_dt: datetime(REPLACE(row.tpep_pickup_datetime, ' ', 'T')),
+                dropoff_dt: datetime(REPLACE(row.tpep_dropoff_datetime, ' ', 'T'))}]->(do_loc)
             """)
 
 def main():
