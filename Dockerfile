@@ -23,14 +23,8 @@ RUN apt-get update && \
 WORKDIR /cse511
 RUN apt-get update && \
     apt-get install -y curl && \
-    # apt-get install -y git && \
     curl -o yellow_tripdata_2022-03.parquet https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2022-03.parquet && \
-    curl -H "Authorization: token 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" -H "Accept: application/vnd.github.v3.raw" -o data_loader.py -L https://api.github.com/repos/CSE511-SPRING-2023/vconjeev-project-2/contents/data_loader.py
-
-    # git clone https://v-Cm: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@github.com/CSE511-SPRING-2023/vconjeev-project-2.git /cse511 --branch main --depth 1 && \
-    # rm -rf /cse511/.git && \
-    # rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
+    curl -H "Authorization: token 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" -H "Accept: application/vnd.github.v3.raw" -H "Cache-Control: no-cache" -o data_loader.py -L https://api.github.com/repos/CSE511-SPRING-2023/vconjeev-project-2/contents/data_loader.py
     
 RUN python3 -m pip install --upgrade pip && \
     python3 -m pip install neo4j pandas pyarrow
