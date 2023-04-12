@@ -10,10 +10,10 @@ class Interface:
 
     def bfs(self, start_node, last_node):
         with self._driver.session() as session:
-            session.run("CALL gds.graph.project('myGraphBfs5', 'Location', {TRIP: {properties: ['distance', 'fare']}})")
+            session.run("CALL gds.graph.project('myGraphBfs', 'Location', {TRIP: {properties: ['distance', 'fare']}})")
             result = session.run(
             f" MATCH (source:Location{{name:{start_node}}}), (target:Location{{name:{last_node}}}) \
-            CALL gds.bfs.stream('myGraphBfs5', {{ \
+            CALL gds.bfs.stream('myGraphBfs', {{ \
             sourceNode: source, \
             targetNodes: target \
             }}) \
@@ -27,9 +27,9 @@ class Interface:
     
     def pagerank(self, max_iterations, weight_property):
         with self._driver.session() as session:
-            session.run("CALL gds.graph.project('myGraphPr5', 'Location', {TRIP: {properties: ['distance', 'fare']}})")
+            session.run("CALL gds.graph.project('myGraphPr', 'Location', {TRIP: {properties: ['distance', 'fare']}})")
             result = session.run(
-                f"CALL gds.pageRank.stream('myGraphPr5', {{maxIterations: {max_iterations}, relationshipWeightProperty: '{weight_property}'}}) \
+                f"CALL gds.pageRank.stream('myGraphPr', {{maxIterations: {max_iterations}, relationshipWeightProperty: '{weight_property}'}}) \
                 YIELD nodeId, score \
                 RETURN gds.util.asNode(nodeId).name AS name, score \
                 ORDER BY score DESC"
