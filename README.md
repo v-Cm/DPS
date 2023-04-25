@@ -32,6 +32,10 @@ Before starting, ensure that the following are installed on your system (The com
     ```
     minikube status
     ```
+* (OPTIONAL) To explore your cluster, you can run the Minikube dashboard on a separate terminal using this command:
+    ```
+    minikube dashboard
+    ```
 * Create two yaml files named `zookeper-setup.yaml` and `kafka-setup.yaml`, and create services and deployments in both of them.
 * Deploy the ZooKeeper service using the command:
     ```
