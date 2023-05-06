@@ -9,7 +9,6 @@ spec:
   - protocol: TCP
     port: 2181
     targetPort: 2181
-
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -42,5 +41,5 @@ spec:
               value: "2"
           resources:
             limits:
-              memory: "1000Mi"
-              cpu: "1000m"
+              memory: "500Mi"
+              cpu: "500m"

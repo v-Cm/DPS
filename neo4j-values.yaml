@@ -4,13 +4,13 @@ neo4j:
     cpu: "0.5"
     memory: "2Gi"
   password: "project2phase2"
-env:
-  NEO4J_PLUGINS: '["graph-data-science"]'
-config:
-  dbms.security.procedures.unrestricted: "gds.*,apoc.*"
 volumes:
   data:
     mode: defaultStorageClass
     defaultStorageClass:
       requests:
         storage: 2Gi
+env:
+  NEO4J_PLUGINS: '["graph-data-science"]'
+config:
+  dbms.security.procedures.unrestricted: "gds.*,apoc.*"
